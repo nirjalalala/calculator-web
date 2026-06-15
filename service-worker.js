@@ -1,7 +1,7 @@
 // The cache name includes a version number.
 // When you update the app, bump this version (e.g. 'calculator-v2') and
 // the old cache will be deleted and replaced with fresh files.
-const CACHE_NAME = 'calculator-1.0.1';
+const CACHE_NAME = 'calculator-1.0.2';
 
 // Every file the app needs to work offline must be listed here.
 const ASSETS = [

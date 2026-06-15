@@ -270,7 +270,7 @@ applyTheme(localStorage.getItem('theme') || 'light');
 // the calculator still works without it, just without offline support.
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js');
+  navigator.serviceWorker.register('./service-worker.js');
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
