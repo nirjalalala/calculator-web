@@ -244,6 +244,29 @@ function flashButton(selector) {
   setTimeout(() => button?.classList.remove('btn--pressed'), 100);
 }
 
+// ── Theme toggle ──────────────────────────────────────────────────────────────
+//
+// The theme is stored as a data-theme attribute on <html>.
+// CSS variables do all the visual work — JS only flips the attribute and
+// updates the button label. localStorage remembers the choice across reloads.
+
+const toggleBtn = document.getElementById('theme-toggle');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  toggleBtn.textContent = theme === 'dark' ? 'Light' : 'Dark';
+}
+
+toggleBtn.addEventListener('click', function () {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('theme', next);
+});
+
+// Restore saved theme on page load — falls back to 'light' if nothing is saved
+applyTheme(localStorage.getItem('theme') || 'light');
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 updateDisplay();

@@ -8,6 +8,43 @@
   padding: 0;
 }
 
+/* ── Theme variables ────────────────────────────────────────────────────────
+   All colors live here. Switching themes = swapping one attribute on <html>.
+   Nothing else in the file contains a hardcoded color value.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --bg-page:        #d6cfc4;
+  --bg-card:        #f0ebe3;
+  --bg-display:     #1e1e1e;
+  --color-expr:     #7aab8a;
+  --color-current:  #5fcf80;
+  --color-digit:    #3d3d3d;
+  --color-operator: #e8922a;
+  --color-clear:    #3d3d3d;
+  --color-delete:   #4a90a0;
+  --color-btn-text: #ffffff;
+  --color-title:    #6b6056;
+  --color-toggle-bg:   #c4bcb3;
+  --color-toggle-text: #4a403a;
+}
+
+[data-theme="dark"] {
+  --bg-page:        #121212;
+  --bg-card:        #2a2a2a;
+  --bg-display:     #0a0a0a;
+  --color-expr:     #7aab8a;
+  --color-current:  #5fcf80;
+  --color-digit:    #4a4a4a;
+  --color-operator: #e8922a;
+  --color-clear:    #4a4a4a;
+  --color-delete:   #4a90a0;
+  --color-btn-text: #ffffff;
+  --color-title:    #888888;
+  --color-toggle-bg:   #3a3a3a;
+  --color-toggle-text: #cccccc;
+}
+
 /* ── Page ──────────────────────────────────────────────────────────────────── */
 
 body {
@@ -16,34 +53,60 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #d6cfc4;
+  background-color: var(--bg-page);
   font-family: sans-serif;
+  transition: background-color 0.3s ease;
 }
 
-/* ── Title ─────────────────────────────────────────────────────────────────── */
+/* ── Page header (title + toggle button in one row) ────────────────────────── */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 320px;
+  margin-bottom: 1.25rem;
+}
 
 .page-title {
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.25em;
-  color: #6b6056;
-  margin-bottom: 1.25rem;
+  color: var(--color-title);
+  transition: color 0.3s ease;
+}
+
+.theme-toggle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  background-color: var(--color-toggle-bg);
+  color: var(--color-toggle-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  filter: brightness(0.92);
 }
 
 /* ── Calculator card ───────────────────────────────────────────────────────── */
 
 .calculator {
-  background-color: #f0ebe3;
+  background-color: var(--bg-card);
   border-radius: 1.25rem;
   padding: 1.25rem;
   width: 320px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.3s ease;
 }
 
 /* ── Display ───────────────────────────────────────────────────────────────── */
 
 .display {
-  background-color: #1e1e1e;
+  background-color: var(--bg-display);
   border-radius: 0.5rem;
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
@@ -53,18 +116,19 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   overflow: hidden;
+  transition: background-color 0.3s ease;
 }
 
 .expression {
   font-size: 0.85rem;
-  color: #7aab8a;
+  color: var(--color-expr);
   min-height: 1.2em;
   word-break: break-all;
 }
 
 .current {
   font-size: 2.5rem;
-  color: #5fcf80;
+  color: var(--color-current);
   word-break: break-all;
 }
 
@@ -82,11 +146,11 @@ body {
   padding: 1rem 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-btn-text);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: filter 0.1s ease;
+  transition: filter 0.1s ease, background-color 0.3s ease;
 }
 
 .btn:active {
@@ -96,20 +160,20 @@ body {
 /* ── Button variants ───────────────────────────────────────────────────────── */
 
 .btn--digit {
-  background-color: #3d3d3d;
+  background-color: var(--color-digit);
 }
 
 .btn--operator {
-  background-color: #e8922a;
+  background-color: var(--color-operator);
 }
 
 .btn--clear {
-  background-color: #3d3d3d;
+  background-color: var(--color-clear);
   grid-column: span 2;
 }
 
 .btn--backspace {
-  background-color: #4a90a0;
+  background-color: var(--color-delete);
   grid-column: span 2;
 }
 
