@@ -231,4 +231,29 @@ Manual testing performed against all requirements from Phase 1.
 
 ## Phase 5 — Deployment
 
-_Coming after testing._
+Deployed via **GitHub Pages** from the `main` branch.
+
+---
+
+## Running locally
+
+You need nothing more than a terminal and a browser.
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/nirjalalala/calculator-web.git
+cd calculator-web
+```
+
+**2. Serve the files**
+
+Open `index.html` directly in your browser — double-click it in your file manager, or run a one-line local server from the project folder:
+
+```bash
+# Python (comes pre-installed on most systems)
+python3 -m http.server 8080
+```
+
+Then open `http://localhost:8080` in your browser.
+
+> Why a server instead of just opening the file? For this project, a file server is not strictly required — plain HTML/CSS/JS with no fetch calls works when opened directly. The server habit is good practice for when your project grows to make API calls, which won't work from a `file://` URL due to browser security restrictions.
