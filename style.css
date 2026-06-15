@@ -112,3 +112,7 @@ body {
   background-color: #4a90a0;
   grid-column: span 2;
 }
+
+.btn--pressed {
+  filter: brightness(0.85);
+}

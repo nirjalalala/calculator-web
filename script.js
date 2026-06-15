@@ -193,6 +193,57 @@ document.querySelector('.buttons').addEventListener('click', function (event) {
   else if (action === 'backspace') handleBackspace();
 });
 
+// ── Keyboard support ──────────────────────────────────────────────────────────
+//
+// Maps physical keys to the same handler functions used by mouse clicks.
+// The logic lives in one place; keyboard is just another way to trigger it.
+//
+// We also flash the matching on-screen button so the user gets visual feedback
+// that the key press was registered — the same feel as clicking.
+
+const KEY_TO_OPERATOR = { '+': '+', '-': '-', '*': '×', '/': '÷' };
+
+document.addEventListener('keydown', function (event) {
+  const key = event.key;
+
+  if (key >= '0' && key <= '9') {
+    flashButton(`[data-digit="${key}"]`);
+    handleDigit(key);
+
+  } else if (key === '.') {
+    flashButton('[data-action="decimal"]');
+    handleDecimal();
+
+  } else if (KEY_TO_OPERATOR[key] !== undefined) {
+    const op = KEY_TO_OPERATOR[key];
+    flashButton(`[data-operator="${op}"]`);
+    handleOperator(op);
+
+  } else if (key === 'Enter' || key === '=') {
+    flashButton('[data-action="equals"]');
+    handleEquals();
+
+  } else if (key === 'Escape') {
+    flashButton('[data-action="clear"]');
+    handleClear();
+
+  } else if (key === 'Backspace') {
+    flashButton('[data-action="backspace"]');
+    handleBackspace();
+  }
+
+  // Prevent '/' from triggering the browser's Quick Find toolbar
+  if (key === '/') event.preventDefault();
+});
+
+// Briefly adds a CSS class to the matching button to mimic a click flash.
+// querySelector returns null if no button matches — the ?. guards against that.
+function flashButton(selector) {
+  const button = document.querySelector(selector);
+  button?.classList.add('btn--pressed');
+  setTimeout(() => button?.classList.remove('btn--pressed'), 100);
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 updateDisplay();
