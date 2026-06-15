@@ -1,0 +1,17 @@
+{
+  "name": "Simple Calculator",
+  "short_name": "Calculator",
+  "description": "A simple calculator with BODMAS support",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#d6cfc4",
+  "theme_color": "#d6cfc4",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

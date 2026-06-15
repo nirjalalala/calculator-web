@@ -263,6 +263,16 @@ toggleBtn.addEventListener('click', function () {
 
 applyTheme(localStorage.getItem('theme') || 'light');
 
+// ── Service worker registration ───────────────────────────────────────────────
+//
+// Service workers are registered from regular page JS, not from HTML.
+// The 'in' check guards against old browsers that don't support them —
+// the calculator still works without it, just without offline support.
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 updateDisplay();

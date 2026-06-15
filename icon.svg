@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Calculator body -->
+  <rect width="512" height="512" rx="80" fill="#2a2a2a"/>
+
+  <!-- Display screen -->
+  <rect x="56" y="56" width="400" height="110" rx="14" fill="#1e1e1e"/>
+  <!-- Green result line inside display -->
+  <rect x="200" y="120" width="220" height="22" rx="6" fill="#5fcf80"/>
+
+  <!-- Row 1: two wide utility buttons -->
+  <rect x="56"  y="198" width="188" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="268" y="198" width="188" height="66" rx="12" fill="#4a90a0"/>
+
+  <!-- Row 2: three digit + one operator -->
+  <rect x="56"  y="278" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="152" y="278" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="248" y="278" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="376" y="278" width="80" height="66" rx="12" fill="#e8922a"/>
+
+  <!-- Row 3 -->
+  <rect x="56"  y="358" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="152" y="358" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="248" y="358" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="376" y="358" width="80" height="66" rx="12" fill="#e8922a"/>
+
+  <!-- Row 4 -->
+  <rect x="56"  y="438" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="152" y="438" width="80" height="66" rx="12" fill="#4a4a4a"/>
+  <rect x="248" y="438" width="80" height="66" rx="12" fill="#e8922a"/>
+  <rect x="376" y="438" width="80" height="66" rx="12" fill="#e8922a"/>
+</svg>
