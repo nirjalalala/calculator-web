@@ -56,6 +56,7 @@ body {
   background-color: var(--bg-page);
   font-family: sans-serif;
   transition: background-color 0.3s ease;
+  padding: 1.5rem 1rem;
 }
 
 /* ── Page header (title + toggle button in one row) ────────────────────────── */
@@ -64,7 +65,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   margin-bottom: 1.25rem;
 }
 
@@ -98,7 +100,8 @@ body {
   background-color: var(--bg-card);
   border-radius: 1.25rem;
   padding: 1.25rem;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   transition: background-color 0.3s ease;
 }
