@@ -176,13 +176,56 @@ This linear flow is why we separate state from display — `calculate()` never t
 
 ## Phase 3 — Implementation
 
-_Coming after design._
+Files built in this order — structure first, then appearance, then behaviour:
+
+| File | Commit | Purpose |
+|------|--------|---------|
+| `index.html` | `bda53db` | HTML skeleton — display panel and button grid |
+| `style.css` | `90628a0` | Visual design matching the reference screenshot |
+| `script.js` | `6429990` | Calculator logic — state, handlers, event delegation |
 
 ---
 
 ## Phase 4 — Testing
 
-_Coming after implementation._
+Manual testing performed against all requirements from Phase 1.
+
+### Functional tests
+
+| Test | Steps | Expected | Result |
+|------|-------|----------|--------|
+| Basic addition | `7` `+` `3` `=` | `10` | PASS |
+| Basic subtraction | `9` `-` `4` `=` | `5` | PASS |
+| Basic multiplication | `6` `×` `7` `=` | `42` | PASS |
+| Basic division | `8` `÷` `4` `=` | `2` | PASS |
+| Decimal result | `1` `2` `.` `5` `÷` `5` `=` | `2.5` | PASS |
+| Chained operations | `3` `+` `5` `×` `2` `=` | `16` | PASS |
+| CLEAR resets all | Enter `9` `9` then `CLEAR` | Display shows `0` | PASS |
+| DELETE removes digit | Enter `1` `2` `3` then `DELETE` | Shows `12` | PASS |
+| Decimal button | `0` `.` `5` `+` `0` `.` `5` `=` | `1` | PASS |
+
+### Edge case tests
+
+| Scenario | Steps | Expected | Result |
+|----------|-------|----------|--------|
+| Division by zero | `5` `÷` `0` `=` | `Error` | PASS |
+| Double decimal ignored | `1` `.` `.` `5` | `1.5` (second `.` ignored) | PASS |
+| Operator after `=` chains | `6` `÷` `2` `=` `×` `4` `=` | `12` | PASS |
+| Equals with no operator | `5` `=` | `5` (no crash) | PASS |
+| Operator pressed twice | `4` `+` `×` `2` `=` | `8` (operator updated to `×`) | PASS |
+| Float rounding | `0.1` `+` `0.2` `=` | `0.3` (not `0.30000000000000004`) | PASS |
+
+### Visual checks
+
+| Check | Result |
+|-------|--------|
+| Warm beige page background | PASS |
+| Dark display with green text | PASS |
+| Expression line shows pending operation | PASS |
+| CLEAR and DELETE span full width | PASS |
+| Operator buttons are orange | PASS |
+| DELETE button is teal | PASS |
+| Buttons darken on press | PASS |
 
 ---
 
