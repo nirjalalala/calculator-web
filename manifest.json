@@ -2,7 +2,7 @@
   "name": "Simple Calculator",
   "short_name": "Calculator",
   "description": "A simple calculator with BODMAS support",
-  "start_url": "/",
+  "start_url": "/calculator-web/",
   "display": "standalone",
   "background_color": "#d6cfc4",
   "theme_color": "#d6cfc4",
