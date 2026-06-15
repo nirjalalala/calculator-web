@@ -1,7 +1,6 @@
 # Calculator Web App
 
-A browser-based calculator built with plain HTML, CSS, and JavaScript.
-Built following the waterfall model as a learning project.
+I built this project as part of my learning journey on [The Odin Project](https://www.theodinproject.com/) — revisiting the concepts and foundations of web development. What made this one special is that it became my first published PWA, and I am so happy that it works. I love exploring new ideas and trying out new concepts, and this was a great learning opportunity on many levels. I also use AI to help me go deeper into the never-ending depths of IT — and I am learning how to use AI to write code that I actually understand, not just code that runs.
 
 ---
 
@@ -232,6 +231,40 @@ Manual testing performed against all requirements from Phase 1.
 ## Phase 5 — Deployment
 
 Deployed via **GitHub Pages** from the `main` branch.
+
+---
+
+## Features
+
+| Feature | Details |
+|---------|---------|
+| Basic arithmetic | `+` `-` `×` `÷` |
+| BODMAS | Correct operator precedence — `3 + 5 × 2 = 13` |
+| Keyboard support | `0–9` `.` `+ - * /` `Enter` `Escape` `Backspace` |
+| Dark / light theme | Toggle button, preference saved to `localStorage` |
+| Responsive | Works on any screen size |
+| PWA | Installable on Android, iOS, and desktop — works offline |
+
+---
+
+## PWA — Installing the app
+
+The calculator is a Progressive Web App. It can be installed to your device's home screen and works without an internet connection.
+
+**Android (Chrome)**
+1. Open the app in Chrome
+2. Tap the three-dot menu → **Install app**
+
+**iOS (Safari)**
+1. Open the app in Safari
+2. Tap the Share button → **Add to Home Screen**
+
+**Desktop (Chrome / Edge)**
+1. Open the app
+2. Click the install icon in the address bar
+
+**Updating the app after a new release**
+Bump `CACHE_NAME` in `service-worker.js` following semver (e.g. `1.0.2` → `1.1.0`). The new service worker installs on the user's next visit and replaces the old cache automatically.
 
 ---
 
