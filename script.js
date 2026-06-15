@@ -1,49 +1,41 @@
 // ── State ────────────────────────────────────────────────────────────────────
 //
-// These four variables are the entire "memory" of the calculator.
-// Every function reads from and writes to these — nothing else.
+// tokens holds the full expression as the user builds it, e.g. [3, '+', 5, '×'].
+// Numbers are stored as JavaScript numbers; operators as strings.
+// When = is pressed, evaluate() processes the whole array at once.
+//
+// This replaces the old firstOperand + operator pair, which could only
+// remember one operation at a time and was forced to compute left-to-right.
 
-let firstOperand = null;   // the number stored before an operator is pressed
-let operator     = null;   // the pending operation: "+", "-", "×", or "÷"
-let currentInput = '0';    // what is shown in the large display right now
-let waitingForSecond = false; // true = the next digit press should start a fresh number
+let tokens = [];              // e.g. [3, '+', 5, '×'] — grows as user types
+let currentInput = '0';       // the number currently being typed on screen
+let waitingForSecond = false; // true after an operator is pressed
 
 // ── DOM references ────────────────────────────────────────────────────────────
-//
-// We grab these once at startup and reuse them.
-// Querying the DOM on every keystroke is wasteful and slower.
 
 const expressionEl = document.getElementById('expression');
 const currentEl    = document.getElementById('current');
 
 // ── updateDisplay ─────────────────────────────────────────────────────────────
 //
-// The ONLY function allowed to touch the DOM.
-// All other functions update state, then call this to reflect that state.
-// This keeps the logic and the UI strictly separated.
+// expression line: shows the committed tokens so far, e.g. "3 + 5 ×"
+// current line:    shows the number being typed, or the result
 
 function updateDisplay() {
   currentEl.textContent = currentInput;
-
-  if (firstOperand !== null && operator !== null) {
-    expressionEl.textContent = firstOperand + ' ' + operator;
-  } else {
-    expressionEl.textContent = '';
-  }
+  expressionEl.textContent = tokens.length > 0 ? tokens.join(' ') : '';
 }
 
 // ── handleDigit ───────────────────────────────────────────────────────────────
 
 function handleDigit(digit) {
   if (waitingForSecond) {
-    // Start a brand new number instead of appending to the previous result
     currentInput = digit;
     waitingForSecond = false;
   } else if (currentInput === '0') {
-    // Replace the leading zero: typing "5" turns "0" into "5", not "05"
     currentInput = digit;
   } else {
-    if (currentInput.length >= 12) return; // prevent display overflow
+    if (currentInput.length >= 12) return;
     currentInput = currentInput + digit;
   }
 
@@ -54,89 +46,117 @@ function handleDigit(digit) {
 
 function handleDecimal() {
   if (waitingForSecond) {
-    // User pressed "." as the first key after an operator — start with "0."
     currentInput = '0.';
     waitingForSecond = false;
     updateDisplay();
     return;
   }
 
-  if (currentInput.includes('.')) return; // only one decimal point allowed
+  if (currentInput.includes('.')) return;
 
   currentInput = currentInput + '.';
   updateDisplay();
 }
 
 // ── handleOperator ────────────────────────────────────────────────────────────
+//
+// Two cases:
+// 1. waitingForSecond is true and tokens already has an operator at the end
+//    → user pressed an operator twice; just replace the last one.
+// 2. Normal case → commit currentInput as a number and push the operator.
 
 function handleOperator(op) {
-  // Chain calculation: if the user types "3 + 5 ×", compute "3 + 5 = 8" first,
-  // then use 8 as the starting point for the next operation.
-  if (operator !== null && !waitingForSecond) {
-    const result = calculate(parseFloat(firstOperand), operator, parseFloat(currentInput));
-
-    if (result === null) {
-      currentInput = 'Error';
-      firstOperand = null;
-      operator = null;
-      updateDisplay();
-      return;
-    }
-
-    currentInput = String(parseFloat(result.toFixed(10)));
+  if (waitingForSecond && tokens.length > 0) {
+    tokens[tokens.length - 1] = op;
+  } else {
+    tokens.push(parseFloat(currentInput));
+    tokens.push(op);
+    waitingForSecond = true;
   }
 
-  firstOperand = currentInput;
-  operator     = op;
-  waitingForSecond = true;
-
-  expressionEl.textContent = firstOperand + ' ' + operator;
+  updateDisplay();
 }
 
 // ── handleEquals ──────────────────────────────────────────────────────────────
 
 function handleEquals() {
-  // Nothing to compute if no operator has been pressed yet
-  if (operator === null || waitingForSecond) return;
+  // Nothing to evaluate if no operator has been pressed, or if
+  // an operator was pressed but no second number was typed yet.
+  if (tokens.length === 0 || waitingForSecond) return;
 
-  const a = parseFloat(firstOperand);
-  const b = parseFloat(currentInput);
+  // Commit the final number to form a complete expression
+  tokens.push(parseFloat(currentInput));
 
-  // Show the full expression before overwriting currentInput with the result
-  expressionEl.textContent = firstOperand + ' ' + operator + ' ' + currentInput + ' =';
+  // Show the full expression, e.g. "3 + 5 × 2 ="
+  expressionEl.textContent = tokens.join(' ') + ' =';
 
-  const result = calculate(a, operator, b);
+  const result = evaluate(tokens);
 
   if (result === null) {
     currentInput = 'Error';
   } else {
-    // toFixed(10) limits floating-point noise (e.g. 0.1 + 0.2 = 0.30000000004)
-    // parseFloat removes trailing zeros (e.g. "2.50000" becomes "2.5")
     currentInput = String(parseFloat(result.toFixed(10)));
   }
 
   currentEl.textContent = currentInput;
 
-  // Reset state so the next key press starts cleanly.
-  // waitingForSecond = true means: if user types a digit next, start fresh;
-  // if user presses an operator next, the result becomes the new firstOperand.
-  firstOperand     = null;
-  operator         = null;
+  // Clear tokens so the next key starts fresh.
+  // waitingForSecond = true means: a digit press will start a new calculation,
+  // but an operator press will chain from the result.
+  tokens = [];
   waitingForSecond = true;
 }
 
-// ── calculate ─────────────────────────────────────────────────────────────────
+// ── evaluate ──────────────────────────────────────────────────────────────────
 //
-// Pure function: takes two numbers and an operator, returns the result.
-// It never reads or writes state. It never touches the DOM.
-// This makes it easy to test and reason about in isolation.
+// Implements operator precedence (BODMAS) in two passes:
+//   Pass 1 — scan left to right, resolve × and ÷ immediately.
+//   Pass 2 — what remains is only + and -, resolve left to right.
+//
+// Example: [3, '+', 5, '×', 2]
+//   Pass 1: finds '×' at index 3 → applyOp(5, '×', 2) = 10 → [3, '+', 10]
+//   Pass 2: applyOp(3, '+', 10) = 13
+//
+// Returns null if division by zero is encountered.
 
-function calculate(a, op, b) {
+function evaluate(inputTokens) {
+  const arr = [...inputTokens]; // work on a copy — never mutate the original
+
+  // Pass 1: × and ÷
+  let i = 1;
+  while (i < arr.length) {
+    if (arr[i] === '×' || arr[i] === '÷') {
+      const result = applyOp(arr[i - 1], arr[i], arr[i + 1]);
+      if (result === null) return null;
+      // Replace the three elements (left, op, right) with the single result.
+      // After splice, i-1 holds the result, so i still points to the next operator.
+      arr.splice(i - 1, 3, result);
+    } else {
+      i += 2; // skip over the number that follows a + or -
+    }
+  }
+
+  // Pass 2: + and −
+  let result = arr[0];
+  for (let j = 1; j < arr.length; j += 2) {
+    result = applyOp(result, arr[j], arr[j + 1]);
+    if (result === null) return null;
+  }
+
+  return result;
+}
+
+// ── applyOp ───────────────────────────────────────────────────────────────────
+//
+// Pure function: applies a single operation to two numbers.
+// Returns null for division by zero so callers can show "Error".
+
+function applyOp(a, op, b) {
   if (op === '+') return a + b;
   if (op === '-') return a - b;
   if (op === '×') return a * b;
   if (op === '÷') {
-    if (b === 0) return null; // signal division-by-zero to the caller
+    if (b === 0) return null;
     return a / b;
   }
 }
@@ -144,9 +164,8 @@ function calculate(a, op, b) {
 // ── handleClear ───────────────────────────────────────────────────────────────
 
 function handleClear() {
-  firstOperand     = null;
-  operator         = null;
-  currentInput     = '0';
+  tokens        = [];
+  currentInput  = '0';
   waitingForSecond = false;
   updateDisplay();
 }
@@ -159,47 +178,37 @@ function handleBackspace() {
     return;
   }
 
-  if (waitingForSecond) return; // nothing typed yet for the second number
+  if (waitingForSecond) return;
 
   if (currentInput.length === 1) {
-    currentInput = '0'; // last digit removed — fall back to zero
+    currentInput = '0';
   } else {
-    currentInput = currentInput.slice(0, -1); // drop the last character
+    currentInput = currentInput.slice(0, -1);
   }
 
   updateDisplay();
 }
 
 // ── Event listener ────────────────────────────────────────────────────────────
-//
-// One listener on the parent .buttons div, not 19 separate listeners.
-// This is called "event delegation": clicks bubble up from the button to the
-// parent, and we inspect event.target to see which button was actually clicked.
 
 document.querySelector('.buttons').addEventListener('click', function (event) {
   const button = event.target;
 
-  if (!button.matches('.btn')) return; // ignore clicks on gaps between buttons
+  if (!button.matches('.btn')) return;
 
   const digit  = button.dataset.digit;
   const op     = button.dataset.operator;
   const action = button.dataset.action;
 
-  if (digit !== undefined)       handleDigit(digit);
-  else if (op !== undefined)     handleOperator(op);
-  else if (action === 'decimal') handleDecimal();
-  else if (action === 'equals')  handleEquals();
-  else if (action === 'clear')   handleClear();
+  if (digit !== undefined)         handleDigit(digit);
+  else if (op !== undefined)       handleOperator(op);
+  else if (action === 'decimal')   handleDecimal();
+  else if (action === 'equals')    handleEquals();
+  else if (action === 'clear')     handleClear();
   else if (action === 'backspace') handleBackspace();
 });
 
 // ── Keyboard support ──────────────────────────────────────────────────────────
-//
-// Maps physical keys to the same handler functions used by mouse clicks.
-// The logic lives in one place; keyboard is just another way to trigger it.
-//
-// We also flash the matching on-screen button so the user gets visual feedback
-// that the key press was registered — the same feel as clicking.
 
 const KEY_TO_OPERATOR = { '+': '+', '-': '-', '*': '×', '/': '÷' };
 
@@ -209,35 +218,27 @@ document.addEventListener('keydown', function (event) {
   if (key >= '0' && key <= '9') {
     flashButton(`[data-digit="${key}"]`);
     handleDigit(key);
-
   } else if (key === '.') {
     flashButton('[data-action="decimal"]');
     handleDecimal();
-
   } else if (KEY_TO_OPERATOR[key] !== undefined) {
     const op = KEY_TO_OPERATOR[key];
     flashButton(`[data-operator="${op}"]`);
     handleOperator(op);
-
   } else if (key === 'Enter' || key === '=') {
     flashButton('[data-action="equals"]');
     handleEquals();
-
   } else if (key === 'Escape') {
     flashButton('[data-action="clear"]');
     handleClear();
-
   } else if (key === 'Backspace') {
     flashButton('[data-action="backspace"]');
     handleBackspace();
   }
 
-  // Prevent '/' from triggering the browser's Quick Find toolbar
   if (key === '/') event.preventDefault();
 });
 
-// Briefly adds a CSS class to the matching button to mimic a click flash.
-// querySelector returns null if no button matches — the ?. guards against that.
 function flashButton(selector) {
   const button = document.querySelector(selector);
   button?.classList.add('btn--pressed');
@@ -245,10 +246,6 @@ function flashButton(selector) {
 }
 
 // ── Theme toggle ──────────────────────────────────────────────────────────────
-//
-// The theme is stored as a data-theme attribute on <html>.
-// CSS variables do all the visual work — JS only flips the attribute and
-// updates the button label. localStorage remembers the choice across reloads.
 
 const toggleBtn = document.getElementById('theme-toggle');
 
@@ -264,7 +261,6 @@ toggleBtn.addEventListener('click', function () {
   localStorage.setItem('theme', next);
 });
 
-// Restore saved theme on page load — falls back to 'light' if nothing is saved
 applyTheme(localStorage.getItem('theme') || 'light');
 
 // ── Init ──────────────────────────────────────────────────────────────────────
