@@ -1,4 +1,4 @@
-# Calculator Web App
+# [Calculator Web App](https://nirjalalala.github.io/calculator-web/)
 
 I built this project as part of my learning journey on [The Odin Project](https://www.theodinproject.com/) — revisiting the concepts and foundations of web development. What made this one special is that it became my first published PWA, and I am so happy that it works. I love exploring new ideas and trying out new concepts, and this was a great learning opportunity on many levels. I also use AI to help me go deeper into the never-ending depths of IT — and I am learning how to use AI to write code that I actually understand, not just code that runs.
 
@@ -22,15 +22,15 @@ I built this project as part of my learning journey on [The Odin Project](https:
 The calculator is a Progressive Web App. It can be installed to your device's home screen and works without an internet connection.
 
 **Android (Chrome)**
-1. Open the app in Chrome
+1. [Open the app in Chrome](https://nirjalalala.github.io/calculator-web/)
 2. Tap the three-dot menu → **Install app**
 
 **iOS (Safari)**
-1. Open the app in Safari
+1. [Open the app in Safari](https://nirjalalala.github.io/calculator-web/)
 2. Tap the Share button → **Add to Home Screen**
 
 **Desktop (Chrome / Edge)**
-1. Open the app
+1. [Open the app](https://nirjalalala.github.io/calculator-web/)
 2. Click the install icon in the address bar
 
 **Updating after a new release**
